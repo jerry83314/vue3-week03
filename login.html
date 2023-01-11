@@ -20,11 +20,13 @@
         <div class="col-8">
           <form id="form" class="form-signin">
             <div class="form-floating mb-3">
-              <input type="email" class="form-control" id="username" placeholder="name@example.com" required autofocus v-model="username">
+              <input type="email" class="form-control" id="username" placeholder="name@example.com" required autofocus
+                v-model="username">
               <label for="username">Email address</label>
             </div>
             <div class="form-floating">
-              <input type="password" class="form-control" id="password" placeholder="Password" required v-model="password">
+              <input type="password" class="form-control" id="password" placeholder="Password" required
+                v-model="password">
               <label for="password">Password</label>
             </div>
             <button class="btn btn-lg btn-primary w-100 mt-3" type="submit" @click.prevent="login">
@@ -49,46 +51,7 @@
     integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc"
     crossorigin="anonymous"></script>
   <script src="https://unpkg.com/vue@next"></script>
-  <script type="module">
-    const { createApp, ref, onMounted } = Vue;
-
-    createApp({
-      setup() {
-        // const text = ref('這是一段文字');
-        const username = ref('');
-        const password = ref('');
-
-        function login() {
-          const url = 'https://vue3-course-api.hexschool.io';
-          const data = {
-            username: username.value,
-            password: password.value
-          }
-
-          axios.post(`${url}/v2/admin/signin`, data)
-            .then((res) => {
-              if (res.status === 200) {
-                const token = res.data.token;
-                localStorage.setItem('login', JSON.stringify(token));
-                
-                location.href = './product.html';
-              }
-            })
-            .catch((err) => {
-              console.log(err)
-            })
-
-        }
-
-        return {
-          // text,
-          username,
-          password,
-          login
-        }
-      }
-    }).mount('#app')
-  </script>
+  <script src="./js/login.js"></script>
 </body>
 
 </html>
