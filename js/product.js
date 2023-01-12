@@ -1,4 +1,7 @@
 const { createApp, ref, onMounted } = Vue;
+let delProductModal = '';
+let productModal = '';
+
 
 createApp({
   setup() {
@@ -17,9 +20,12 @@ createApp({
       imageUrl: '',
       imagesUrl: []
     });
+    const temp = ref({});
 
     onMounted(() => {
       checkLogin();
+      delProductModal = new bootstrap.Modal(document.getElementById('delProductModal'));
+      productModal = new bootstrap.Modal(document.getElementById('productModal'));
     })
 
     // 驗證是否登入
@@ -63,8 +69,7 @@ createApp({
       axios.post(`${api_url.value}/v2/api/${api_path.value}/admin/product`, data)
         .then((res) => {
           // 關閉 modal，但關不起來 ？
-          const myModal = new bootstrap.Modal(document.getElementById('productModal'), {});
-          myModal.hide();
+          productModal.hide();
           getProduct();
         })
         .catch((err) => {
@@ -72,8 +77,32 @@ createApp({
         })
     }
 
+    // 刪除產品
+    function delProduct() {
+      if (temp.value) {
+        const { id } = temp.value;
+        axios.delete(`${api_url.value}/v2/api/${api_path.value}/admin/product/${id}`)
+        .then((res) => {
+          // 關閉 modal，但關不起來 ？
+          delProductModal.hide();
+          getProduct();
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      } else {
+        alert('沒有產品 ID');
+      }
+    }
+
     // 打開 modal
-    function openModal(el) {
+    function openModal(el, product) {
+      
+      if (product) {
+        temp.value = product;
+      }
+
+      // 沒有 id 就是打開新增產品 modal
       const myModal = new bootstrap.Modal(document.getElementById(el), {});
       myModal.show();
     }
@@ -83,10 +112,12 @@ createApp({
       api_path,
       newProduct,
       products,
+      temp,
       checkLogin,
       getProduct,
       addProduct,
-      openModal
+      openModal,
+      delProduct
     }
   }
 }).mount('#app')
