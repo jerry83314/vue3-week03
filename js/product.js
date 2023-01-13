@@ -9,18 +9,18 @@ createApp({
     const api_path = ref('jyue-web');
     const products = ref([]);
     const newProduct = ref({
-      title: '',
-      category: '',
-      origin_price: 0,
-      price: 0,
-      unit: '',
-      description: '',
-      content: '',
-      is_enabled: 1,
-      imageUrl: '',
+      // title: '',
+      // category: '',
+      // origin_price: 0,
+      // price: 0,
+      // unit: '',
+      // description: '',
+      // content: '',
+      // is_enabled: 1,
+      // imageUrl: '',
       imagesUrl: []
     });
-    const temp = ref({});
+    const isAdd = ref(true);
 
     onMounted(() => {
       checkLogin();
@@ -52,9 +52,7 @@ createApp({
     function getProduct() {
       axios.get(`${api_url.value}/v2/api/${api_path.value}/admin/products/all`)
         .then((res) => {
-          
           products.value = Object.values(res.data.products);
-          console.log('取得產品', products.value)
         })
         .catch((err) => {
           console.log(err)
@@ -63,13 +61,14 @@ createApp({
 
     // 新增產品
     function addProduct() {
-      const data = {
+      axios.post(`${api_url.value}/v2/api/${api_path.value}/admin/product`, {
         data: newProduct.value
-      }
-      axios.post(`${api_url.value}/v2/api/${api_path.value}/admin/product`, data)
+      })
         .then((res) => {
-          // 關閉 modal，但關不起來 ？
+          alert('新增成功');
+          // 關閉 modal
           productModal.hide();
+          // 重新取得資料
           getProduct();
         })
         .catch((err) => {
@@ -79,32 +78,64 @@ createApp({
 
     // 刪除產品
     function delProduct() {
-      if (temp.value) {
-        const { id } = temp.value;
-        axios.delete(`${api_url.value}/v2/api/${api_path.value}/admin/product/${id}`)
+      const { id } = newProduct.value;
+      axios.delete(`${api_url.value}/v2/api/${api_path.value}/admin/product/${id}`)
         .then((res) => {
-          // 關閉 modal，但關不起來 ？
+          alert('刪除成功');
+          // 關閉 modal
           delProductModal.hide();
+          // 重新取得資料
           getProduct();
         })
         .catch((err) => {
           console.log(err)
         })
+    }
+
+    // 更新產品
+    function updateProduct() {
+      const { id } = newProduct.value
+      axios.put(`${api_url.value}/v2/api/${api_path.value}/admin/product/${id}`, {
+        data: newProduct.value
+      })
+        .then((res) => {
+          alert('更新成功');
+          // 關閉 modal
+          productModal.hide();
+          // 重新取得資料
+          getProduct();
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
+
+    // productModal 確認
+    function confirmProduct() {
+      // 如果為 true 則是新增產品，反之為更新產品
+      if (isAdd.value) {
+        addProduct();
       } else {
-        alert('沒有產品 ID');
+        updateProduct();
       }
     }
 
     // 打開 modal
-    function openModal(el, product) {
-      
-      if (product) {
-        temp.value = product;
+    function openModal(method, product) {
+      if (method === 'add') {
+        newProduct.value = {
+          imagesUrl: []
+        };
+        isAdd.value = true;
+        productModal.show();
+      } else if (method === 'edit') {
+        newProduct.value = { ...product };
+        isAdd.value = false;
+        productModal.show();
+      } else if (method === 'delete') {
+        newProduct.value = { ...product };
+        delProductModal.show();
       }
-
-      // 沒有 id 就是打開新增產品 modal
-      const myModal = new bootstrap.Modal(document.getElementById(el), {});
-      myModal.show();
     }
 
     return {
@@ -112,12 +143,14 @@ createApp({
       api_path,
       newProduct,
       products,
-      temp,
+      isAdd,
       checkLogin,
       getProduct,
       addProduct,
+      delProduct,
+      updateProduct,
       openModal,
-      delProduct
+      confirmProduct
     }
   }
 }).mount('#app')

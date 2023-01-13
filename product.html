@@ -13,7 +13,7 @@
   <div id="app">
     <div class="container">
       <div class="text-end mt-4">
-        <button class="btn btn-primary" @click="openModal('productModal')">
+        <button class="btn btn-primary" @click="openModal('add')">
           建立新的產品
         </button>
       </div>
@@ -50,10 +50,10 @@
             </td>
             <td>
               <div class="btn-group">
-                <button type="button" class="btn btn-outline-primary btn-sm" @click="openModal('productModal', product)">
+                <button type="button" class="btn btn-outline-primary btn-sm" @click="openModal('edit', product)">
                   編輯
                 </button>
-                <button type="button" class="btn btn-outline-danger btn-sm" @click="openModal('delProductModal', product)">
+                <button type="button" class="btn btn-outline-danger btn-sm" @click="openModal('delete', product)">
                   刪除
                 </button>
               </div>
@@ -146,7 +146,7 @@
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
               取消
             </button>
-            <button type="button" class="btn btn-primary" @click="addProduct">
+            <button type="button" class="btn btn-primary" @click="confirmProduct">
               確認
             </button>
           </div>
@@ -171,7 +171,7 @@
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
               取消
             </button>
-            <button type="button" class="btn btn-danger" @click="delProduct()">
+            <button type="button" class="btn btn-danger" @click="delProduct">
               確認刪除
             </button>
           </div>
